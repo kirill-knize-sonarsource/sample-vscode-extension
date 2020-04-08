@@ -31,6 +31,12 @@
 					"default": 100,
 					"description": "Controls the maximum number of problems produced by the server."
 				},
+				"languageServerExample.spaceCharsSwitch": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Controls if exstension should count space chars."
+				},
 				"languageServerExample.trace.server": {
 					"scope": "window",
 					"type": "string",

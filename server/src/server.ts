@@ -87,12 +87,13 @@ connection.onInitialized(() => {
 // The example settings
 interface ExampleSettings {
 	maxNumberOfProblems: number;
+	spaceCharsSwitch: boolean;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: ExampleSettings = { maxNumberOfProblems: 1000 };
+const defaultSettings: ExampleSettings = { maxNumberOfProblems: 1000, spaceCharsSwitch: true };
 let globalSettings: ExampleSettings = defaultSettings;
 
 // Cache the settings of all open documents
@@ -143,11 +144,26 @@ documents.onDidChangeContent(change => {
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// In this simple example we get the settings for every validate run.
 	let settings = await getDocumentSettings(textDocument.uri);
+	
 	console.log("Validate Text Document.");
+	console.log(JSON.stringify(settings));
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	let text = textDocument.getText();
-
 	let size = text.length;
+	let count = 0;
+	if(settings.spaceCharsSwitch) {
+		console.log("Count chars WITH spaces.");
+		count = size
+	} else {
+		console.log("Count chars WITHOUT spaces.");
+		let regexp = new RegExp('\\s+');
+		let tokens = text.split(regexp);
+		console.log("Tokens: " + JSON.stringify(tokens));
+		tokens.forEach((it)=>{
+			count += it.length;
+		})
+	}
+	
 	let diagnostics: Diagnostic[] = [];
 	let diagnostic: Diagnostic = {
 		severity: DiagnosticSeverity.Information,
@@ -155,7 +171,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 			start: textDocument.positionAt(0),
 			end: textDocument.positionAt(size - 1)
 		},
-		message: `Document characters count: ${size}.`,
+		message: `Document characters count: ${count}.`,
 		source: 'ex'
 	};
 	diagnostics.push(diagnostic);
