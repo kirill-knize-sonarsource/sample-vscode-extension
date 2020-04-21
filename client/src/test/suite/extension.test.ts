@@ -41,7 +41,15 @@ suite('Extension Test Suite', () => {
 		var diags = await waitForSonarLintDiagnostics(fileUri);
 		console.log('DIAGS: ' + JSON.stringify(diags));
 		assert.deepEqual(diags.length, 1);
-		assert.equal(diags[0].message, "Document characters count: 52.");
+		var isWin = false;
+		if(process.platform == 'win32') {
+			isWin = true;
+		}
+		let expectedResult = "Document characters count: 52."
+		if(isWin) {
+			expectedResult = "Document characters count: 54."
+		}
+		assert.equal(diags[0].message, expectedResult);
 
 		vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	  }).timeout(60 * 1000);

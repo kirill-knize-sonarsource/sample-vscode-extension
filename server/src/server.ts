@@ -152,21 +152,13 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let size = text.length;
 	var count = size;
 	let whiteSpaceCount = 0;
-	let lineBreakCount = 0;
 	console.log('OS: ' + process.platform)
-	var isWin = false;
-	if(process.platform == 'win32') {
-		isWin = true;
-	}
 
 	let whiteSpaceCharSet = getWhiteSpaceCharSet();
 
 	for (var i = 0; i < text.length; i++) {
 		if(whiteSpaceCharSet.has(text.charAt(i))) {
 			whiteSpaceCount++;
-		}
-		if(text.charAt(i) == '\u000A') {
-			lineBreakCount++;
 		}
 	}
 
@@ -175,9 +167,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 		count -= whiteSpaceCount;
 	}
 
-	if(isWin) {
-		count += lineBreakCount;
-	}
+
 
 	let diagnostics: Diagnostic[] = [];
 	let diagnostic: Diagnostic = {
