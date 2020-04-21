@@ -33,6 +33,7 @@ console.log("Server global scope.");
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
+let settings : ExampleSettings;
 
 connection.onInitialize((params: InitializeParams) => {
 	console.log("Server on initialize.");
@@ -143,8 +144,7 @@ documents.onDidChangeContent(change => {
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// In this simple example we get the settings for every validate run.
-	let settings = await getDocumentSettings(textDocument.uri);
-	
+	settings = await getDocumentSettings(textDocument.uri);
 	console.log("Validate Text Document.");
 	console.log(JSON.stringify(settings));
 	// The validator creates diagnostics for all uppercase words length 2 and more
@@ -220,6 +220,18 @@ connection.onCompletionResolve(
 		return item;
 	}
 );
+
+connection.onNotification((notification) => {
+	if(notification == 'Space flag true'){
+		settings.spaceCharsSwitch = false;
+		return;
+	}
+	if(notification == 'Space flag true'){
+		settings.spaceCharsSwitch = true;
+		return;
+	}
+	console.log('Unknown notification!')
+});
 
 /*
 connection.onDidOpenTextDocument((params) => {
