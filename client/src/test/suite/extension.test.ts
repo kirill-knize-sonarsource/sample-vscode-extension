@@ -42,14 +42,15 @@ suite('Extension Test Suite', () => {
 		console.log('DIAGS: ' + JSON.stringify(diags));
 		assert.deepEqual(diags.length, 1);
 		var isWin = false;
-		if(process.platform == 'win32') {
+		if(process.platform === 'win32') {
 			isWin = true;
 		}
-		let expectedResult = "Document characters count: 52."
+		let expectedResult = 52;
 		if(isWin) {
-			expectedResult = "Document characters count: 54."
+			expectedResult = 53;
 		}
-		assert.equal(diags[0].message, expectedResult);
+		let expectedResultStr = 'Document characters count: ' + expectedResult + '.';
+		assert.equal(diags[0].message, expectedResultStr);
 
 		vscode.commands.executeCommand('workbench.action.closeActiveEditor');
 	  }).timeout(60 * 1000);
