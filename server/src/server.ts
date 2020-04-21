@@ -150,20 +150,35 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	let text = textDocument.getText();
 	let size = text.length;
-	let count = 0;
-	if(settings.spaceCharsSwitch) {
-		console.log("Count chars WITH spaces.");
-		count = size
-	} else {
-		console.log("Count chars WITHOUT spaces.");
-		let regexp = new RegExp('\\s+');
-		let tokens = text.split(regexp);
-		console.log("Tokens: " + JSON.stringify(tokens));
-		tokens.forEach((it)=>{
-			count += it.length;
-		})
+	var count = size;
+	let whiteSpaceCount = 0;
+	let lineBreakCount = 0;
+	console.log('OS: ' + process.platform)
+	var isWin = false;
+	if(process.platform == 'win32') {
+		isWin = true;
 	}
-	
+
+	let whiteSpaceCharSet = getWhiteSpaceCharSet();
+
+	for (var i = 0; i < text.length; i++) {
+		if(whiteSpaceCharSet.has(text.charAt(i))) {
+			whiteSpaceCount++;
+		}
+		if(text.charAt(i) == '\u000A') {
+			lineBreakCount++;
+		}
+	}
+
+	if(!settings.spaceCharsSwitch) {
+		console.log("Count chars WITH spaces.");
+		count -= whiteSpaceCount;
+	}
+
+	if(isWin) {
+		count += lineBreakCount;
+	}
+
 	let diagnostics: Diagnostic[] = [];
 	let diagnostic: Diagnostic = {
 		severity: DiagnosticSeverity.Information,
@@ -259,3 +274,15 @@ documents.listen(connection);
 
 // Listen on the connection
 connection.listen();
+
+
+function getWhiteSpaceCharSet() : Set<string>{
+	let set = new Set<string>();
+	set.add('\u0020'); // space
+	set.add('\u0009'); // tab
+	set.add('\u000A'); // line break
+	set.add('\u000B'); // line tab
+	set.add('\u000C'); // form feed
+	set.add('\u000D'); // carriage return
+	return set;
+}
