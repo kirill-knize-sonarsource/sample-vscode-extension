@@ -11,19 +11,19 @@ const REPO_ROOT = path.resolve(__dirname, '../..');
 
 export function instrument() {
   const iLibInstrument = require('istanbul-lib-instrument');
-
   const instrumenter = iLibInstrument.createInstrumenter();
-  const files = rreaddir(path.resolve(REPO_ROOT, 'out'));
+  let address = path.resolve(REPO_ROOT, 'client/out');
+  console.log('REPO_ROOT out: ' + address);
+  const files = rreaddir(address);
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (/\.js\.map$/.test(file)) {
       //console.log(`ignoring ${file}`);
       continue;
     }
-
-    const inputPath = path.resolve(REPO_ROOT, 'out', files[i]);
-    const outputPath = path.resolve(REPO_ROOT, 'out-cov', files[i]);
-
+    const inputPath = path.resolve(REPO_ROOT, 'client/out', files[i]);
+    const outputPath = path.resolve(REPO_ROOT, 'client/out-cov', files[i]);
+    console.log('Hello form coverage middle.')
     if (!/\.js$/.test(file) || /(^|[\\/])test[\\/]/.test(file)) {
       //console.log(`copying ${inputPath}`);
       copyFile(inputPath, outputPath);
